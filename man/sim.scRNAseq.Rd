@@ -2,10 +2,11 @@
 % Please edit documentation in R/sim.scRNAseq.R
 \name{sim.scRNAseq}
 \alias{sim.scRNAseq}
-\title{Simulating scRNA-seq expression data This function blah blah blah description}
+\title{Simulating scRNA-seq expression data 
+Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.}
 \usage{
 sim.scRNAseq(dataset, nreps, group = NULL, nTags = NULL, lib.size = NULL,
-  flibs = c(0.7, 1.3), pDiff = 0.1, pUp = 0.5, foldDiff = 3,
+  flibs = c(0.7, 1.3), pDiff = 0.1, pUp = 0.5, logFC = c(0.25, 1.5),
   drop.low.lambda = TRUE, drop.extreme.dispersion = 0.1,
   add.dropout = TRUE, pDropout = c(0.1, 0.2, 0.5, 0.8),
   drop.method = c("zero", "poisson"), drop.lambda = 1, verbose = TRUE,
@@ -34,7 +35,7 @@ dataset.}
 
 \item{pUp}{Proportion of differentially expressed genes that are upregulated.}
 
-\item{foldDiff}{Fold-change difference of differentially expressed genes.}
+\item{logFC}{Desired log-fold changes for differentially expressed genes. If single number, all DE genes will exhibit constant logFC. If vector of two numbers provided (default \code{c(0.25, 1.5)}), logFC of DE genes will be drawn uniformly within that range.}
 
 \item{drop.low.lambda}{Logical, whether to drop low lambdas.}
 
@@ -56,7 +57,8 @@ dataset.}
 A numeric count matrix of desired size, simulated with parameters extracted from a real dataset, containing differentially expressed genes and (optionally imposed) dropouts.
 }
 \description{
-Simulating scRNA-seq expression data This function blah blah blah description
+Simulating scRNA-seq expression data 
+Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.
 }
 \examples{
 # Simulate toy dataset with 3 reps per group and 20 genes

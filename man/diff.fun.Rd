@@ -5,10 +5,12 @@
 \title{Impose differential expression. 
 Alters the re-sampled parameters to reflect differential expression}
 \usage{
-\method{diff}{fun}(object, seed)
+\method{diff}{fun}(object, logFC, seed)
 }
 \arguments{
 \item{object}{DGEList object.}
+
+\item{logFC}{Desired log-fold changes for differentially expressed genes. If single number, all DE genes will exhibit constant logFC. If vector of two numbers provided (default \code{c(0.25, 1.5)}), logFC of DE genes will be drawn uniformly within that range.}
 
 \item{seed}{Optional seed, if it desired to replicate the simulation.}
 }
