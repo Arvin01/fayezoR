@@ -38,7 +38,7 @@ getDataset <- function(counts, drop.extreme.dispersion=0.1, drop.low.lambda=TRUE
   {  
     # bad = cutoff dispersion value
     bad <- quantile(dispersion, 1-drop.extreme.dispersion, names = FALSE)
-    # Index the tags whose dispersions are below the cutoff dispersion
+    # Index the tags whose dispersions are below the cutoff dispersion, i.e. the ones to keep
     ids <- dispersion <= bad
     # Subset avelogcpm and dispersions for the tags with ok dispersions
     AveLogCPM <- AveLogCPM[ids]

@@ -1,4 +1,5 @@
-#' Simulating scRNA-seq expression data This function blah blah blah description
+#' Simulating scRNA-seq expression data 
+#' Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data. 
 #' @param dataset Numeric matrix of read counts from which to extract
 #'   parameters.
 #' @param nreps Desired number of replicates per group.
@@ -13,7 +14,7 @@
 #'   dataset.
 #' @param pDiff Proportion of differentially expressed genes.
 #' @param pUp Proportion of differentially expressed genes that are upregulated.
-#' @param foldDiff Fold-change difference of differentially expressed genes.
+#' @param logFC Desired log-fold changes for differentially expressed genes. If single number, all DE genes will exhibit constant logFC. If vector of two numbers provided (default \code{c(0.25, 1.5)}), logFC of DE genes will be drawn uniformly within that range. 
 #' @param drop.low.lambda Logical, whether to drop low lambdas.
 #' @param drop.extreme.dispersion Proportion of extreme dispersions to drop. 
 #' @param add.dropout Logical, whether to impose dropouts.
@@ -30,7 +31,7 @@
 #' NULL
 #' @return A numeric count matrix of desired size, simulated with parameters extracted from a real dataset, containing differentially expressed genes and (optionally imposed) dropouts.
 
-sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, flibs=c(0.7,1.3), pDiff=0.1, pUp=0.5, foldDiff=3, drop.low.lambda=TRUE, drop.extreme.dispersion=0.1, add.dropout=TRUE, pDropout=c(0.1,0.2,0.5,0.8), drop.method=c("zero", "poisson"), drop.lambda=1, verbose=TRUE, seed=NULL){
+sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, flibs=c(0.7,1.3), pDiff=0.1, pUp=0.5, logFC=c(0.25,1.5), drop.low.lambda=TRUE, drop.extreme.dispersion=0.1, add.dropout=TRUE, pDropout=c(0.1,0.2,0.5,0.8), drop.method=c("zero", "poisson"), drop.lambda=1, verbose=TRUE, seed=NULL){
   
   require(edgeR)
   
@@ -60,8 +61,7 @@ sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, 
                              group = group, 
                              design = model.matrix(~group), 
                              pDiff= pDiff, 
-                             pUp = pUp, 
-                             foldDiff = foldDiff)) 
+                             pUp = pUp)) 
   
   ##### Simulate differentially expressed genes
   
@@ -85,7 +85,7 @@ sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, 
   
   # Alter Lambda's to incorporate differential expression
   if(verbose) message("Calculating differential expression.\n")	
-  dat <- diff.fun(dat, seed=seed) 
+  dat <- diff.fun(dat, logFC, seed=seed) 
   
   # Simulate data using these parameters
   if(verbose) message("Simulating data.\n")	
