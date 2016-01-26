@@ -26,8 +26,8 @@ diff.fun <- function(object, logFC, seed)
   set.seed(seed)
   ind <- sample(nTags, floor(pDiff*nTags))
   
-  # If there are at least some DE genes and their logFC's aren't trivial
-  if(length(ind)>0 & logFC!=0) {
+  # If there are at least some DE genes and logFC!=0
+  if(length(ind>0) && !(length(logFC)==1 && logFC==0)) {
     
     # Get logFC for each DE gene
     set.seed(seed)
