@@ -4,7 +4,7 @@
 #'   parameters.
 #' @param nreps Desired number of replicates per group.
 #' @param group Vector or factor giving the experimental group/condition for
-#'   each sample/library.
+#'   each sample/library in simulated dataset.
 #' @param nTags Desired number of genes. If not provided, simulated dataset will
 #'   contain as many genes as the real dataset.
 #' @param lib.size Numeric vector giving the total count (sequence depth) for
@@ -29,7 +29,7 @@
 #' # data(prostatedata)
 #' #simData <- sim.scRNAseq(dataset=prostatedata, nreps=3, nTags=20, drop.method=c("zero"))
 #' NULL
-#' @return A numeric count matrix of desired size, simulated with parameters extracted from a real dataset, containing differentially expressed genes and (optionally imposed) dropouts.
+#' @return DGElist object containing all simulation settings and results, including the count matrix and dropout-imposed count matrix.  
 
 sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, flibs=c(0.7,1.3), pDiff=0.1, pUp=0.5, logFC=c(0.25,1.5), drop.low.lambda=TRUE, drop.extreme.dispersion=0.1, add.dropout=TRUE, pDropout=c(0.1,0.2,0.5,0.8), drop.method=c("zero", "poisson"), drop.lambda=1, verbose=TRUE, seed=NULL){
   
@@ -37,9 +37,10 @@ sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, 
   
   # If group is not provided, set 2 groups with equal number of replicates
   if (is.null(group)){
-    group = as.factor(rep(0:1, each=nreps)) 
+    group = as.factor(rep(c("A", "B"), each=nreps)) 
   }
   group = as.factor(group)
+  samplenames = paste(group, rep(1:nreps, 2), sep="")
   nlibs = length(group)
   flibs <- rep(flibs, length.out=2)
   
@@ -82,6 +83,7 @@ sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, 
   # Adds Lambda and Dispersion matrices to dat object
   if(verbose) message("Sampling.\n")  
   dat <- sample.fun(dat, seed=seed) 
+  colnames(dat$counts) <- samplenames
   
   # Alter Lambda's to incorporate differential expression
   if(verbose) message("Calculating differential expression.\n")	
@@ -96,6 +98,7 @@ sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, 
     if(verbose) message("Adding dropouts.\n")
     drop.method <- match.arg(drop.method)
     dat <- dropout.fun(dat, pDropout, drop.method, drop.lambda, seed=seed)
+    colnames(dat$counts.dropouts) <- samplenames
   }
   
   dat

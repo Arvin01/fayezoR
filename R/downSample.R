@@ -17,8 +17,10 @@ downSample <- function(dataset, group=NULL, nreps, depth, nsims=20){
   
   # If group isn't provided, just assume the groups are equally divided
   if (is.null(group)){
-    group = as.factor(rep(0:1, each=dim(dataset)[2]/2)) 
+    group <- as.factor(rep("A","B"), each=dim(dataset)[2]/2)) 
   }
+  group <- as.factor(group)
+  samplenames <- paste(group, c(1:length(which(group==factor(group)[1])), 1:length(which(group==factor(group)[2]))), sep="")
   
   # Downsample nims times
   for (k in 1:nsims){
@@ -27,13 +29,14 @@ downSample <- function(dataset, group=NULL, nreps, depth, nsims=20){
     filename <- paste("N", nreps, "_D", depth, "_sim", k, ".RData", sep="")
     
     ### First, select nreps from each group in full dataset
-    n1 <- length(which(group==0))
-    n2 <- length(which(group==1))
+    n1 <- length(which(group=="A"))
+    n2 <- length(which(group=="B"))
     # indices for randomly selected control and treatment samples
     control.idx <- sample(1:n1, nreps)
     trt.idx <- sample(1:n2, nreps) + n1
     # dataset subsetted by randomly selected samples
     subReps <- as.matrix(dataset[,c(control.idx, trt.idx)], ncol=N)
+    colnames(subReps) <- samplenames[c(control.idx, trt.idx)]
     subReps.depths <- colSums(subReps)
     
     ### Next, down-sample each sample in the subReps and put it in a new matrix
@@ -55,6 +58,7 @@ downSample <- function(dataset, group=NULL, nreps, depth, nsims=20){
     # }
     
     # Save this dataset as an RData object to be used again later
+    
     save(subData, file=filename)
   }
 }
