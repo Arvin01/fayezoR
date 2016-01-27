@@ -45,7 +45,7 @@ dataset.}
 
 \item{pDropout}{Numeric vector of dropout probabilities to consider. Will only be used if \code{add.dropout=TRUE}.}
 
-\item{drop.method}{Dropout method, with two options: zero-inflation, or low-rate Poisson. Will only be used if \code{add.dropout=TRUE}.}
+\item{drop.method}{Dropout method, with two options: zero-inflation (default), or low-rate Poisson. Will only be used if \code{add.dropout=TRUE}.}
 
 \item{drop.lambda}{Mean of low-rate Poisson for the Poisson-dropout scenario. Will only be used if \code{add.dropout=TRUE} and \code{drop.method="poisson"}.}
 

@@ -19,7 +19,7 @@
 #' @param drop.extreme.dispersion Proportion of extreme dispersions to drop. 
 #' @param add.dropout Logical, whether to impose dropouts.
 #' @param pDropout Numeric vector of dropout probabilities to consider. Will only be used if \code{add.dropout=TRUE}.
-#' @param drop.method Dropout method, with two options: zero-inflation, or low-rate Poisson. Will only be used if \code{add.dropout=TRUE}.
+#' @param drop.method Dropout method, with two options: zero-inflation (default), or low-rate Poisson. Will only be used if \code{add.dropout=TRUE}.
 #' @param drop.lambda Mean of low-rate Poisson for the Poisson-dropout scenario. Will only be used if \code{add.dropout=TRUE} and \code{drop.method="poisson"}.
 #' @param verbose Logical, whether to print simulation progress to screen. 
 #' @param seed Optional seed, if it desired to replicate the simulation.
