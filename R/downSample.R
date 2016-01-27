@@ -17,7 +17,7 @@ downSample <- function(dataset, group=NULL, nreps, depth, nsims=20){
   
   # If group isn't provided, just assume the groups are equally divided
   if (is.null(group)){
-    group <- as.factor(rep("A","B"), each=dim(dataset)[2]/2)) 
+    group <- as.factor(rep(c("A","B"), each=dim(dataset)[2]/2)) 
   }
   group <- as.factor(group)
   samplenames <- paste(group, c(1:length(which(group==factor(group)[1])), 1:length(which(group==factor(group)[2]))), sep="")
