@@ -83,7 +83,6 @@ sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, 
   # Adds Lambda and Dispersion matrices to dat object
   if(verbose) message("Sampling.\n")  
   dat <- sample.fun(dat, seed=seed) 
-  colnames(dat$counts) <- samplenames
   
   # Alter Lambda's to incorporate differential expression
   if(verbose) message("Calculating differential expression.\n")	
@@ -92,6 +91,7 @@ sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, 
   # Simulate data using these parameters
   if(verbose) message("Simulating data.\n")	
   dat <- sim.fun(dat, seed=seed)
+  colnames(dat$counts) <- samplenames
   
   # Add dropouts
   if(add.dropout){
