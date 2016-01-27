@@ -36,7 +36,6 @@ downSample <- function(dataset, group=NULL, nreps, depth, nsims=20){
     trt.idx <- sample(1:n2, nreps) + n1
     # dataset subsetted by randomly selected samples
     subReps <- as.matrix(dataset[,c(control.idx, trt.idx)], ncol=N)
-    colnames(subReps) <- samplenames[c(control.idx, trt.idx)]
     subReps.depths <- colSums(subReps)
     
     ### Next, down-sample each sample in the subReps and put it in a new matrix
@@ -44,6 +43,7 @@ downSample <- function(dataset, group=NULL, nreps, depth, nsims=20){
     
     # Initialize the matrix
     subData <- data.frame(matrix(ncol=N, nrow=G))
+    colnames(subData) <- samplenames[c(control.idx, trt.idx)]
     
     # Multinomial sampling at desired depth
     for(n in 1:N){
