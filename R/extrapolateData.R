@@ -80,7 +80,7 @@ extrapolateData <- function(pilotdata, filename.pilot, group.pilot=NULL, nreps, 
                                   paste(levels(group.pilot)[2], 1:nreps, sep=""))
   
   # Save extrapolated data with same filename as pilot data; just make sure it goes in appropriate directory
-  filename <- paste("ExtrapolatedData", filename.pilot, sep="/")
+  filename <- paste("../ExtrapolatedData", filename.pilot, sep="/")
   save(extrapolatedData, file=filename)
 }
 
