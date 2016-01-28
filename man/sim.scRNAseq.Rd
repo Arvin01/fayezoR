@@ -19,7 +19,7 @@ parameters.}
 \item{nreps}{Desired number of replicates per group.}
 
 \item{group}{Vector or factor giving the experimental group/condition for
-each sample/library.}
+each sample/library in simulated dataset.}
 
 \item{nTags}{Desired number of genes. If not provided, simulated dataset will
 contain as many genes as the real dataset.}
@@ -54,7 +54,7 @@ dataset.}
 \item{seed}{Optional seed, if it desired to replicate the simulation.}
 }
 \value{
-A numeric count matrix of desired size, simulated with parameters extracted from a real dataset, containing differentially expressed genes and (optionally imposed) dropouts.
+DGElist object containing all simulation settings and results, including the count matrix and dropout-imposed count matrix.
 }
 \description{
 Simulating scRNA-seq expression data 

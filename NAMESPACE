@@ -3,6 +3,7 @@
 S3method(diff,fun)
 export(downSample)
 export(dropout.fun)
+export(extrapolateData)
 export(getDataset)
 export(sample.fun)
 export(sim.fun)

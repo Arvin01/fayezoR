@@ -20,7 +20,7 @@ downSample <- function(dataset, group=NULL, nreps, depth, nsims=20){
     group <- as.factor(rep(c("A","B"), each=dim(dataset)[2]/2)) 
   }
   group <- as.factor(group)
-  samplenames <- paste(group, c(1:length(which(group==factor(group)[1])), 1:length(which(group==factor(group)[2]))), sep="")
+  samplenames <- paste(group, c(1:length(which(group==levels(group)[1])), 1:length(which(group==levels(group)[2]))), sep="")
   
   # Downsample nims times
   for (k in 1:nsims){
@@ -47,7 +47,7 @@ downSample <- function(dataset, group=NULL, nreps, depth, nsims=20){
     
     # Multinomial sampling at desired depth
     for(n in 1:N){
-      subData[,n] <- rmultinom(1, size=depth*1e6, prob=subReps[,n])
+      subData[,n] <- rmultinom(1, size=depthx, prob=subReps[,n])
     }
     
     # Binomial sampling (Li and Tibshirani); this is a special case of multinomial sampling and won't be used
