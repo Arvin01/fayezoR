@@ -43,7 +43,7 @@ extrapolateData <- function(pilotdata, filename.pilot, group.pilot=NULL, nreps, 
   ### Get separate means per group from pilot data
   
   # If group is not provided, set 2 groups with equal number of replicates
-  if (is.null(groups.pilot)){
+  if (is.null(group.pilot)){
     group.pilot <- as.factor(rep(c("A", "B"), each=N.pilot/2)) 
   }
   group.pilot <- as.factor(group.pilot)
