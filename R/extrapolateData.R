@@ -1,7 +1,6 @@
 #' Extrapolate pilot data.
 #' Takes an input pilot dataset and extrapolates it to a desired size.
 #' @param pilotdata Numeric count matrix; pilot dataset to be extrapolated to a desired larger size.
-#' @param filename.pilot Filename of pilot dataset; extrapolated dataset will be named accordingly
 #' @param groups.pilot Vector or factor giving the experimental group/condition for each sample/library in the pilot dataset. If not provided, groups are assumed equally divided.
 #' @param nreps Desired number of replicates per group in extrapolated data.
 #' @param depth Desired depth (in millions) for each sample/replicate in extrapolated data.
@@ -10,7 +9,7 @@
 #'
 #' @return Extrapolated dataset, given pilot data
 
-extrapolateData <- function(pilotdata, filename.pilot, group.pilot=NULL, nreps, depth){
+extrapolateData <- function(pilotdata, group.pilot=NULL, nreps, depth){
 
   N.pilot <- dim(pilotdata)[2]
   G <- dim(pilotdata)[1]
