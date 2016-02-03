@@ -8,7 +8,7 @@
 #' @export
 #' @examples
 #'
-#' @return Doesn't return anything, just saves the down-sampled datasets as RData.
+#' @return Extrapolated dataset, given pilot data
 
 extrapolateData <- function(pilotdata, filename.pilot, group.pilot=NULL, nreps, depth){
 
@@ -79,8 +79,6 @@ extrapolateData <- function(pilotdata, filename.pilot, group.pilot=NULL, nreps, 
   colnames(extrapolatedData) <- c(paste(levels(group.pilot)[1], 1:nreps, sep=""),
                                   paste(levels(group.pilot)[2], 1:nreps, sep=""))
 
-  # Save extrapolated data with same filename as pilot data; just make sure it goes in appropriate directory
-  filename <- paste("../Datasets/ExtrapolatedData", filename.pilot, sep="/")
-  save(extrapolatedData, file=filename)
+  extrapolatedData
 }
 
