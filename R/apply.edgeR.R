@@ -6,9 +6,9 @@
 #' @export
 #' @examples
 #'
-#' @return Doesn't return anything, just saves the reults table as RData file.
+#' @return Applies edgeR to given dataset, and returns results table
 
-apply.edgeR <- function(dataset, filename, group=NULL){
+apply.edgeR <- function(dataset, group=NULL){
 
   # Note I'm in the ExpDesignApp/Code directory
 
@@ -34,11 +34,5 @@ apply.edgeR <- function(dataset, filename, group=NULL){
   fit <- glmFit(d, design)
   lrt <- glmLRT(fit)
   res.table <- lrt$table
-
-  # Things to save: adjusted p-values, indices of DE genes
-  res.table$FDR <- p.adjust(res.table$PValue, method="BH")
-
-  # Save edgeR results with same filename as pilot data; just make sure it goes in appropriate directory
-  filename <- paste("../Results", filename, sep="/")
-  save(res.table, file=filename)
+  res.table
 }
