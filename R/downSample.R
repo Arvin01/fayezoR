@@ -47,7 +47,7 @@ downSample <- function(dataset, group=NULL, nreps, depth, nsims=20){
 
     # Multinomial sampling at desired depth
     for(n in 1:N){
-      subData[,n] <- rmultinom(1, size=depth, prob=subReps[,n])
+      subData[,n] <- rmultinom(1, size=depth*1e6, prob=subReps[,n])
     }
 
     # Binomial sampling (Li and Tibshirani); this is a special case of multinomial sampling and won't be used
