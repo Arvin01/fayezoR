@@ -1,4 +1,4 @@
-### TEST TEST TEST
+### LET'S SAY I MADE THESE CHANGES BUT DON'T WANT TO KEEP THEM
 
 #' Simulating scRNA-seq expression data
 #' Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.
