@@ -1,17 +1,10 @@
-### LET'S SAY I MADE THESE CHANGES BUT DON'T WANT TO KEEP THEM
-
 #' Simulating scRNA-seq expression data
 #' Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.
-#' @param dataset Numeric matrix of read counts from which to extract
-#'   parameters.
+#' @param dataset Numeric matrix of read counts from which to extract parameters.
 #' @param nreps Desired number of replicates per group.
-#' @param group Vector or factor giving the experimental group/condition for
-#'   each sample/library in simulated dataset.
-#' @param nTags Desired number of genes. If not provided, simulated dataset will
-#'   contain as many genes as the real dataset.
-#' @param lib.size Numeric vector giving the total count (sequence depth) for
-#'   each library. If not provided, library sizes are extracted from the real
-#'   dataset.
+#' @param group Vector or factor giving the experimental group/condition for each sample/library in simulated dataset.
+#' @param nTags Desired number of genes. If not provided, simulated dataset will contain as many genes as the real dataset.
+#' @param lib.size Numeric vector giving the total count (sequence depth) for each library. If not provided, library sizes are extracted from the real dataset.
 #' @param flibs Some wiggle room for the library sizes extracted from real
 #'   dataset.
 #' @param pDiff Proportion of differentially expressed genes.
