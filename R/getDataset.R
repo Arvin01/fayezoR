@@ -34,14 +34,13 @@ getDataset <- function(counts, drop.extreme.dispersion=0.1, drop.low.lambda=TRUE
   if(drop.low.lambda) d <- d[rowSums(cp>1) >= 2, ]
 
   # Save the tagwise average logCPM
-  d$AveLogCPM <- log2(rowMeans(cpm(d, prior.count = 1e-5)))
+  AveLogCPM <- log2(rowMeans(cpm((!counts0)*d$counts, prior.count = 1e-5)))
 
-  mu = rowSums(counts)/nsamples
-  var = rowSums((counts - mu)^2)/(nsamples-1)
+  mu = rowSums((!counts0)*counts)/nsamples
+  var = rowSums((!counts0)*(counts - mu)^2)/(nn0-1)
   disp = (var-mu + 0.0001)/mu^2
   disp = ifelse(disp > 0, disp, min(disp[disp > 0]))
-
-  d$tagwise.dispersion <- disp
+  pZero = 1 - nn0/nsamples
 
   # If we specified a percentage of extreme dispersions to drop, then drop those genes with extreme dispersions past the cutoff
   if(is.numeric(drop.extreme.dispersion))
@@ -50,11 +49,12 @@ getDataset <- function(counts, drop.extreme.dispersion=0.1, drop.low.lambda=TRUE
     bad <- quantile(disp, 1-drop.extreme.dispersion, names = FALSE)
     # Index the tags whose dispersions are below the cutoff dispersion, i.e. the ones to keep
     ids <- disp <= bad
-    # Subset avelogcpm and dispersions for the tags with ok dispersions
-    d$AveLogCPM <- d$AveLogCPM[ids]
+    # Subset parameters for the tags with ok dispersions
+    AveLogCPM <- AveLogCPM[ids]
     disp <- disp[ids]
+    pZero <- pZero[ids]
   }
 
   # Return list of parameters sampled from the real dataset
-  list(dataset.AveLogCPM = as.numeric(d$AveLogCPM), dataset.dispersion = disp, dataset.lib.size = d$samples$lib.size, dataset.nTags = nrow(d))
+  list(dataset.AveLogCPM = as.numeric(AveLogCPM), dataset.dispersion = disp, dataset.pZero = pZero, dataset.lib.size = d$samples$lib.size, dataset.nTags = nrow(d))
 }
