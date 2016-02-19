@@ -2,10 +2,9 @@
 % Please edit documentation in R/sim.scRNAseq.R
 \name{sim.scRNAseq}
 \alias{sim.scRNAseq}
-\title{Simulating scRNA-seq expression data
-Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.}
+\title{Simulating scRNA-seq expression data}
 \usage{
-sim.scRNAseq(dataset, nlibs = NULL, nTags = NULL, design = NULL,
+sim.scRNAseq(dataset, nlibs = NULL, nTags = NULL, groups = NULL,
   beta = NULL, drop.low.lambda = TRUE, drop.extreme.dispersion = 0.1,
   lib.size = NULL, flibs = c(0.7, 1.3), verbose = TRUE, seed = NULL)
 }
@@ -16,7 +15,7 @@ sim.scRNAseq(dataset, nlibs = NULL, nTags = NULL, design = NULL,
 
 \item{nTags}{Desired number of genes. If not provided, simulated dataset will contain as many genes as the real dataset.}
 
-\item{design}{Model matrix (without an intercept) that you would like to simulate from}
+\item{groups}{Vector indicating membership in at most 2 groups}
 
 \item{beta}{Set of coefficients for the model matrix (must have same number of columns as mod)}
 
@@ -45,7 +44,6 @@ dataset.}
 DGElist object containing all simulation settings and results, including the count matrix and dropout-imposed count matrix.
 }
 \description{
-Simulating scRNA-seq expression data
 Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.
 }
 \examples{
