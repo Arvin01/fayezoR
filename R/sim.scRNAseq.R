@@ -1,15 +1,13 @@
 #' Simulating scRNA-seq expression data
 #' Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.
 #' @param dataset Numeric matrix of read counts from which to extract parameters.
-#' @param nreps Desired number of replicates per group.
-#' @param group Vector or factor giving the experimental group/condition for each sample/library in simulated dataset.
+#' @param nlibs Desired number of replicates per group.
 #' @param nTags Desired number of genes. If not provided, simulated dataset will contain as many genes as the real dataset.
+#' @param design Model matrix (without an intercept) that you would like to simulate from
+#' @param beta Set of coefficients for the model matrix (must have same number of columns as mod)
 #' @param lib.size Numeric vector giving the total count (sequence depth) for each library. If not provided, library sizes are extracted from the real dataset.
 #' @param flibs Some wiggle room for the library sizes extracted from real
 #'   dataset.
-#' @param pDiff Proportion of differentially expressed genes.
-#' @param pUp Proportion of differentially expressed genes that are upregulated.
-#' @param logFC Desired log-fold changes for differentially expressed genes. If single number, all DE genes will exhibit constant logFC. If vector of two numbers provided (default \code{c(0.25, 1.5)}), logFC of DE genes will be drawn uniformly within that range.
 #' @param drop.low.lambda Logical, whether to drop low lambdas.
 #' @param drop.extreme.dispersion Proportion of extreme dispersions to drop.
 #' @param add.dropout Logical, whether to impose dropouts.
@@ -26,67 +24,106 @@
 #' NULL
 #' @return DGElist object containing all simulation settings and results, including the count matrix and dropout-imposed count matrix.
 
-sim.scRNAseq <- function(dataset, nreps, group=NULL, nTags=NULL, lib.size=NULL, flibs=c(0.7,1.3), pDiff=0.1, pUp=0.5, logFC=c(0.25,1.5), drop.low.lambda=TRUE, drop.extreme.dispersion=0.1, add.dropout=TRUE, pDropout=c(0.1,0.2,0.5,0.8), drop.method=c("zero", "poisson"), drop.lambda=1, verbose=TRUE, seed=NULL){
+sim.scRNAseq <- function(dataset, nlibs=NULL, nTags=NULL,
+                         design=NULL, beta=NULL,
+                         drop.low.lambda=TRUE, drop.extreme.dispersion=0.1,
+                         lib.size=NULL, flibs=c(0.7,1.3),
+                         add.dropout=TRUE, pDropout=c(0.1,0.2,0.5,0.8), drop.method=c("zero", "poisson"), drop.lambda=1,
+                         verbose=TRUE, seed=NULL){
 
   require(edgeR)
 
-  # If group is not provided, set 2 groups with equal number of replicates
-  if (is.null(group)){
-    group = as.factor(rep(c("A", "B"), each=nreps))
+  # Make sure that model matrix doesn't have intercept
+  if(any( apply(design,2,function(x){all(x==1)}) )){
+    stop("Model matrix should not have an intercept.\n")
   }
-  group = as.factor(group)
-  samplenames = paste(group, rep(1:nreps, 2), sep="")
-  nlibs = length(group)
-  flibs <- rep(flibs, length.out=2)
+
+  # Make sure betas have same columns as model matrix
+  if(ncol(design) != ncol(beta)){
+    stop("Beta coefficients must have same number of columns as model matrix.\n")
+  }
 
   ##### Preparing the dataset
 
-  if(verbose) message("Preparing dataset.\n")
+  if(verbose) message("Extracting parameters from dataset.\n")
 
   # Sample parameters from dataset
-  dataset <- getDataset(counts = dataset,
+  dataset.params <- getDataset(counts = dataset,
                         drop.extreme.dispersion = drop.extreme.dispersion,
                         drop.low.lambda = drop.low.lambda)
 
-  # Create new DGEList for storing dataset information
-  dat <- new("DGEList", list(dataset = dataset,
-                             nTags = nTags,
-                             lib.size = lib.size,
-                             flibs = flibs,
-                             nlibs = nlibs,
-                             group = group,
-                             design = model.matrix(~group),
-                             pDiff= pDiff,
-                             pUp = pUp))
+  # Set nTags and nlibs when neither design or beta provided
+  if(is.null(design) & is.null(beta)){
+    if(is.null(nTags)){
+      nTags <- dataset.params$nTags
+    }
+    if(is.null(nlibs)){
+      nlibs <- dataset.params$nlibs
+    }
 
-  ##### Simulate differentially expressed genes
+    # Set nTags and nlibs when only design provided
+  } else if(!is.null(design) & is.null(beta)){
+    if(is.null(nlibs)){
+      nlibs = dim(design)[1]
+    } else if(nlibs!=dim(design)[1]){
+      message("nlibs must be same size as design...\n setting nlibs to be same size of design.")
+      nlibs = dim(design)[1]
+    }
+    if(is.null(nTags)){
+      nTags <- dataset.params$nTags
+    }
+
+    # Set nTags and nlibs when only beta provided
+  } else if(is.null(design) & !is.null(beta)){
+    if(is.null(nTags)){
+      nTags = dim(beta)[1]
+    } else if(!is.null(nTags) & nTags!=dim(beta)[1]){
+      message("nTags must be same size as beta...\n setting nTags to be same size of beta.")
+      nTags = dim(beta)[1]
+    }
+    if(is.null(nlibs)){
+      nlibs <- dataset.params$nlibs
+    }
+
+    # Set nTags and nlibs when both design and beta provided
+  } else if(!is.null(design) & !is.null(beta)){
+    if(is.null(nlibs)){
+      nlibs = dim(design)[1]
+    } else if(nlibs!=dim(design)[1]){
+      message("nlibs must be same size as design...\n setting nlibs to be same size of design.")
+      nlibs = dim(design)[1]
+    }
+    if(is.null(nTags)){
+      nTags = dim(beta)[1]
+    } else if(nTags!=dim(beta)[1]){
+      message("nTags must be same size as beta...\n setting nTags to be same size of beta.")
+      nTags = dim(beta)[1]
+    }
+  }
 
   # If lib.size not already specified, sample them randomly from lib sizes sampled from real dataset, with some wiggle room
   if(is.null(lib.size)){
     set.seed(seed)
-    dat$lib.size <- runif(nlibs,
-                          min = flibs[1]*median(dat$dataset$dataset.lib.size),
-                          max = flibs[2]*median(dat$dataset$dataset.lib.size))
+    flibs <- rep(flibs, length.out=2)
+    lib.size <- runif(nlibs, min = flibs[1]*median(dataset.params$lib.size), max = flibs[2]*median(dataset.params$lib.size))
   }
 
-  # If nTags set to NULL, take them from real dataset
-  if(is.null(nTags)){
-    dat$nTags <- dat$dataset$dataset.nTags
-  }
+  # Create new DGEList for storing dataset information
+  dat <- new("DGEList", list(dataset.params = dataset.params,
+                             nTags = nTags,
+                             nlibs = nlibs,
+                             lib.size = lib.size,
+                             design = design,
+                             beta = beta))
+
+  ##### Resampling parameters and getting the count matrix
 
   # Sampling Lambda and Dispersion parameters to be used in simulated dataset
   # Adds Lambda and Dispersion matrices to dat object
-  if(verbose) message("Sampling.\n")
+  if(verbose) message("Re-sampling parameters.\n")
   dat <- sample.fun(dat, seed=seed)
 
-  # Alter Lambda's to incorporate differential expression
-  if(verbose) message("Calculating differential expression.\n")
-  dat <- diff.fun(dat, logFC, seed=seed)
-
-  # Simulate data using these parameters
-  if(verbose) message("Simulating data.\n")
   dat <- sim.fun(dat, seed=seed)
-  colnames(dat$counts) <- samplenames
 
   # Add dropouts
   if(add.dropout){

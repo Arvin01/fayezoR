@@ -10,7 +10,7 @@
 #' @return List of parameters sampled from the real dataset: vector of gene-wise average log-CPM, vector of gene-wise dispersions, library sizes, number of genes.
 #'
 
-getDataset <- function(counts, drop.extreme.dispersion=0.1, drop.low.lambda=TRUE) {
+getDataset <- function(counts, drop.extreme.dispersion, drop.low.lambda) {
 
   # Get nn0 = number of nonzero counts per row
   # Filter out rows with only 1 nonzero count
@@ -56,5 +56,5 @@ getDataset <- function(counts, drop.extreme.dispersion=0.1, drop.low.lambda=TRUE
   }
 
   # Return list of parameters sampled from the real dataset
-  list(dataset.AveLogCPM = as.numeric(AveLogCPM), dataset.dispersion = disp, dataset.pZero = pZero, dataset.lib.size = d$samples$lib.size, dataset.nTags = nrow(d))
+  list(aveLogCPM = as.numeric(AveLogCPM), dispersion = disp, pZero = pZero, lib.size = d$samples$lib.size, nTags = nrow(d), nlibs = ncol(d))
 }

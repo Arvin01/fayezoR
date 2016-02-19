@@ -15,32 +15,31 @@ sample.fun <- function(object, seed)
   nTags <- object$nTags
 
   # Parameters extracted from real dataset
-  AveLogCPM <- object$dataset$dataset.AveLogCPM
-  dispersion <- object$dataset$dataset.dispersion
-  pZero <- object$dataset$dataset.pZero
+  aveLogCPM <- object$dataset.params$aveLogCPM
+  dispersion <- object$dataset.params$dispersion
+  pZero <- object$dataset.params$pZero
 
   # Indices from sampling a subset of those real dataset parameters
   set.seed(seed)
-  id_r <- sample(length(AveLogCPM), nTags, replace = TRUE)
+  id_r <- sample(length(aveLogCPM), nTags, replace = TRUE)
 
-  # Lambda, Dispersion = genewise parameters to be used for simulation dataset
-  Lambda <- 2^(AveLogCPM[id_r]) #lambda for each gene
-  Lambda <- Lambda/sum(Lambda)
-  Dispersion <- dispersion[id_r]
+  # mu, dispersion = genewise parameters to be used for simulation dataset
+  # mu is the baseline rate per gene
+  mu <- 2^(aveLogCPM[id_r]) #lambda for each gene
+  mu <- mu/sum(mu)
+  dispersion <- dispersion[id_r]
   pZero <- pZero[id_r]
 
-  # Get ids for which lambdas are 0
-  id_0 <- Lambda == 0
+  # Get ids for which gene-wise rates are 0
+  id_0 <- mu == 0
 
   # Keep only the parameters for which lambdas are not 0
-  Lambda <- Lambda[!id_0]
-  Dispersion <- Dispersion[!id_0]
+  mu <- mu[!id_0]
+  dispersion <- dispersion[!id_0]
   pZero <- pZero[!id_0]
-  Lambda <- expandAsMatrix(Lambda, dim = c(nTags, nlibs))
-  Dispersion <- expandAsMatrix(Dispersion, dim = c(nTags, nlibs))
 
-  object$Lambda <- Lambda
-  object$Dispersion <- Dispersion
+  object$mu <- mu
+  object$dispersion <- dispersion
   object$pZero <- pZero
   object
 }

@@ -11,19 +11,37 @@
 
 sim.fun <- function(object, seed)
 {
-  Lambda <- object$Lambda
-  Dispersion <- object$Dispersion
+  mu <- object$mu
+  dispersion <- object$dispersion
   pZero <- object$pZero
   nTags <- object$nTags
   nlibs <- object$nlibs
   lib.size <- object$lib.size
+  design <- object$design
+  beta <- object$beta
+
+  # If either design or coefficients aren't provided
+  if(is.null(design) | is.null(beta)){
+    message("Need both design and coefficients to impose differential expression...\n Simulating non-differentially expressed data.")
+    lambda <- mu
+  }
+
+  else{
+    message("Simulating differentially expressed data.")
+    # recall that mu = exp(beta0)
+    lambda <- exp(log(mu) + beta %*% t(design))
+  }
+
+  dispersion <- expandAsMatrix(dispersion, dim = c(nTags, nlibs))
 
   set.seed(seed)
-  counts <- matrix(rnbinom(nTags*nlibs, mu = t(t(Lambda)*lib.size), size = 1/Dispersion), nrow = nTags, ncol = nlibs)
+  counts <- matrix(rnbinom(nTags*nlibs, mu = t(t(lambda)*lib.size), size = 1/dispersion), nrow = nTags, ncol = nlibs)
   I.count <- t(sapply(pZero, function(p) rbinom(nlibs, prob=1-p, size=1)))
   counts <- I.count*counts
 
   rownames(counts) <- paste("ids", 1:nTags, sep = "")
+  colnames(counts) = paste("sample", 1:nlibs, sep = "")
+
   object$counts <- counts
   return(object)
 }
