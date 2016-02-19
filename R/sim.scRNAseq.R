@@ -1,9 +1,10 @@
 #' Simulating scRNA-seq expression data
+#'
 #' Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.
 #' @param dataset Numeric matrix of read counts from which to extract parameters.
 #' @param nlibs Desired number of replicates per group.
 #' @param nTags Desired number of genes. If not provided, simulated dataset will contain as many genes as the real dataset.
-#' @param design Model matrix (without an intercept) that you would like to simulate from
+#' @param groups Vector indicating membership in at most 2 groups
 #' @param beta Set of coefficients for the model matrix (must have same number of columns as mod)
 #' @param lib.size Numeric vector giving the total count (sequence depth) for each library. If not provided, library sizes are extracted from the real dataset.
 #' @param flibs Some wiggle room for the library sizes extracted from real
@@ -25,7 +26,7 @@
 #' @return DGElist object containing all simulation settings and results, including the count matrix and dropout-imposed count matrix.
 
 sim.scRNAseq <- function(dataset, nlibs=NULL, nTags=NULL,
-                         design=NULL, beta=NULL,
+                         groups=NULL, beta=NULL,
                          drop.low.lambda=TRUE, drop.extreme.dispersion=0.1,
                          lib.size=NULL, flibs=c(0.7,1.3),
                          #add.dropout=TRUE, pDropout=c(0.1,0.2,0.5,0.8), drop.method=c("zero", "poisson"), drop.lambda=1,
@@ -33,18 +34,21 @@ sim.scRNAseq <- function(dataset, nlibs=NULL, nTags=NULL,
 
   require(edgeR)
 
-  # Make sure that model matrix doesn't have intercept
-  if( !is.null(design) ){
-    if( any(apply(design,2,function(x){all(x==1)})) ){
-      stop("Model matrix should not have an intercept.\n")
-    }
-    # Make sure betas have same columns as model matrix
+  design=NULL
+
+  # If group was provided, make a design matrix out of it with no intercept
+  if(!is.null(group)){
+    group <- as.factor(group)
+    group <- ifelse(group==levels(group)[1], -1, 1)
+    design <- model.matrix(~-1 + group)
+
+    # If betas provided, make sure same columns as design matrix
     if( !is.null(beta) & (ncol(design) != ncol(beta)) ){
       stop("Beta coefficients must have same number of columns as model matrix.\n")
     }
   }
 
-  ##### Preparing the dataset
+  ##### EXTRACTING PARAMETERS FROM DATASET #####
 
   if(verbose) cat("Extracting parameters from dataset.\n")
 
@@ -52,6 +56,8 @@ sim.scRNAseq <- function(dataset, nlibs=NULL, nTags=NULL,
   dataset.params <- getDataset(counts = dataset,
                         drop.extreme.dispersion = drop.extreme.dispersion,
                         drop.low.lambda = drop.low.lambda)
+
+  ##### SPECIFYING SIZE OF DATASET AND LIB SIZES #####
 
   # Set nTags and nlibs when neither design or beta provided
   if(is.null(design) & is.null(beta)){
@@ -117,13 +123,13 @@ sim.scRNAseq <- function(dataset, nlibs=NULL, nTags=NULL,
                              design = design,
                              beta = beta))
 
-  ##### Resampling parameters and getting the count matrix
+  ##### SPECIFYING SIZE OF DATASET AND LIB SIZES #####
 
-  # Sampling Lambda and Dispersion parameters to be used in simulated dataset
-  # Adds Lambda and Dispersion matrices to dat object
+  # Sampling parameters to be used in simulated dataset
   if(verbose) cat("Re-sampling parameters.\n")
   dat <- sample.fun(dat, seed=seed)
 
+  # Simulate parameters
   dat <- sim.fun(dat, seed=seed)
 
   # Add dropouts
@@ -133,6 +139,5 @@ sim.scRNAseq <- function(dataset, nlibs=NULL, nTags=NULL,
   #   dat <- dropout.fun(dat, pDropout, drop.method, drop.lambda, seed=seed)
   #   colnames(dat$counts.dropouts) <- samplenames
   # }
-
   dat
 }
