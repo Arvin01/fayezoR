@@ -4,7 +4,7 @@
 \alias{sim.scRNAseq}
 \title{Simulating scRNA-seq expression data}
 \usage{
-sim.scRNAseq(dataset, nlibs = NULL, nTags = NULL, groups = NULL,
+sim.scRNAseq(dataset, nlibs = NULL, nTags = NULL, design = NULL,
   beta = NULL, drop.low.lambda = TRUE, drop.extreme.dispersion = 0.1,
   lib.size = NULL, flibs = c(0.7, 1.3), verbose = TRUE, seed = NULL)
 }
@@ -15,7 +15,7 @@ sim.scRNAseq(dataset, nlibs = NULL, nTags = NULL, groups = NULL,
 
 \item{nTags}{Desired number of genes. If not provided, simulated dataset will contain as many genes as the real dataset.}
 
-\item{groups}{Vector indicating membership in at most 2 groups}
+\item{design}{Model matrix (without an intercept) that you would like to simulate from}
 
 \item{beta}{Set of coefficients for the model matrix (must have same number of columns as mod)}
 
