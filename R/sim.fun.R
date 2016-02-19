@@ -22,12 +22,13 @@ sim.fun <- function(object, seed)
 
   # If either design or coefficients aren't provided
   if(is.null(design) | is.null(beta)){
-    message("Need both design and coefficients to impose differential expression...\n Simulating non-differentially expressed data.")
+    cat("Need both design and coefficients to impose differential expression...\n Simulating non-differentially expressed data.")
     lambda <- mu
+    lambda <- expandAsMatrix(lambda, dim=c(nTags, nlibs))
   }
 
   else{
-    message("Simulating differentially expressed data.")
+    cat("Simulating differentially expressed data.\n")
     # recall that mu = exp(beta0)
     lambda <- exp(log(mu) + beta %*% t(design))
   }

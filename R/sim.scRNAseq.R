@@ -28,24 +28,25 @@ sim.scRNAseq <- function(dataset, nlibs=NULL, nTags=NULL,
                          design=NULL, beta=NULL,
                          drop.low.lambda=TRUE, drop.extreme.dispersion=0.1,
                          lib.size=NULL, flibs=c(0.7,1.3),
-                         add.dropout=TRUE, pDropout=c(0.1,0.2,0.5,0.8), drop.method=c("zero", "poisson"), drop.lambda=1,
+                         #add.dropout=TRUE, pDropout=c(0.1,0.2,0.5,0.8), drop.method=c("zero", "poisson"), drop.lambda=1,
                          verbose=TRUE, seed=NULL){
 
   require(edgeR)
 
   # Make sure that model matrix doesn't have intercept
-  if(any( apply(design,2,function(x){all(x==1)}) )){
-    stop("Model matrix should not have an intercept.\n")
-  }
-
-  # Make sure betas have same columns as model matrix
-  if(ncol(design) != ncol(beta)){
-    stop("Beta coefficients must have same number of columns as model matrix.\n")
+  if( !is.null(design) ){
+    if( any(apply(design,2,function(x){all(x==1)})) ){
+      stop("Model matrix should not have an intercept.\n")
+    }
+    # Make sure betas have same columns as model matrix
+    if( !is.null(beta) & (ncol(design) != ncol(beta)) ){
+      stop("Beta coefficients must have same number of columns as model matrix.\n")
+    }
   }
 
   ##### Preparing the dataset
 
-  if(verbose) message("Extracting parameters from dataset.\n")
+  if(verbose) cat("Extracting parameters from dataset.\n")
 
   # Sample parameters from dataset
   dataset.params <- getDataset(counts = dataset,
@@ -120,18 +121,18 @@ sim.scRNAseq <- function(dataset, nlibs=NULL, nTags=NULL,
 
   # Sampling Lambda and Dispersion parameters to be used in simulated dataset
   # Adds Lambda and Dispersion matrices to dat object
-  if(verbose) message("Re-sampling parameters.\n")
+  if(verbose) cat("Re-sampling parameters.\n")
   dat <- sample.fun(dat, seed=seed)
 
   dat <- sim.fun(dat, seed=seed)
 
   # Add dropouts
-  if(add.dropout){
-    if(verbose) message("Adding dropouts.\n")
-    drop.method <- match.arg(drop.method)
-    dat <- dropout.fun(dat, pDropout, drop.method, drop.lambda, seed=seed)
-    colnames(dat$counts.dropouts) <- samplenames
-  }
+  # if(add.dropout){
+  #   if(verbose) message("Adding dropouts.\n")
+  #   drop.method <- match.arg(drop.method)
+  #   dat <- dropout.fun(dat, pDropout, drop.method, drop.lambda, seed=seed)
+  #   colnames(dat$counts.dropouts) <- samplenames
+  # }
 
   dat
 }

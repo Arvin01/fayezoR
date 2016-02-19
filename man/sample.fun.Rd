@@ -2,7 +2,7 @@
 % Please edit documentation in R/sample.fun.R
 \name{sample.fun}
 \alias{sample.fun}
-\title{Re-sample real dataset parameters. 
+\title{Re-sample real dataset parameters.
 Re-sample parameters extracted from real dataset, to be used for the simulation dataset.}
 \usage{
 sample.fun(object, seed)
@@ -16,7 +16,7 @@ sample.fun(object, seed)
 Saves re-sampled gene-wise lambdas and dispersions to DGEList object.
 }
 \description{
-Re-sample real dataset parameters. 
+Re-sample real dataset parameters.
 Re-sample parameters extracted from real dataset, to be used for the simulation dataset.
 }
 \examples{

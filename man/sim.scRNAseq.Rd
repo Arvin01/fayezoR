@@ -2,44 +2,34 @@
 % Please edit documentation in R/sim.scRNAseq.R
 \name{sim.scRNAseq}
 \alias{sim.scRNAseq}
-\title{Simulating scRNA-seq expression data 
+\title{Simulating scRNA-seq expression data
 Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.}
 \usage{
-sim.scRNAseq(dataset, nreps, group = NULL, nTags = NULL, lib.size = NULL,
-  flibs = c(0.7, 1.3), pDiff = 0.1, pUp = 0.5, logFC = c(0.25, 1.5),
-  drop.low.lambda = TRUE, drop.extreme.dispersion = 0.1,
-  add.dropout = TRUE, pDropout = c(0.1, 0.2, 0.5, 0.8),
-  drop.method = c("zero", "poisson"), drop.lambda = 1, verbose = TRUE,
-  seed = NULL)
+sim.scRNAseq(dataset, nlibs = NULL, nTags = NULL, design = NULL,
+  beta = NULL, drop.low.lambda = TRUE, drop.extreme.dispersion = 0.1,
+  lib.size = NULL, flibs = c(0.7, 1.3), add.dropout = TRUE,
+  pDropout = c(0.1, 0.2, 0.5, 0.8), drop.method = c("zero", "poisson"),
+  drop.lambda = 1, verbose = TRUE, seed = NULL)
 }
 \arguments{
-\item{dataset}{Numeric matrix of read counts from which to extract
-parameters.}
+\item{dataset}{Numeric matrix of read counts from which to extract parameters.}
 
-\item{nreps}{Desired number of replicates per group.}
+\item{nlibs}{Desired number of replicates per group.}
 
-\item{group}{Vector or factor giving the experimental group/condition for
-each sample/library in simulated dataset.}
+\item{nTags}{Desired number of genes. If not provided, simulated dataset will contain as many genes as the real dataset.}
 
-\item{nTags}{Desired number of genes. If not provided, simulated dataset will
-contain as many genes as the real dataset.}
+\item{design}{Model matrix (without an intercept) that you would like to simulate from}
 
-\item{lib.size}{Numeric vector giving the total count (sequence depth) for
-each library. If not provided, library sizes are extracted from the real
-dataset.}
-
-\item{flibs}{Some wiggle room for the library sizes extracted from real
-dataset.}
-
-\item{pDiff}{Proportion of differentially expressed genes.}
-
-\item{pUp}{Proportion of differentially expressed genes that are upregulated.}
-
-\item{logFC}{Desired log-fold changes for differentially expressed genes. If single number, all DE genes will exhibit constant logFC. If vector of two numbers provided (default \code{c(0.25, 1.5)}), logFC of DE genes will be drawn uniformly within that range.}
+\item{beta}{Set of coefficients for the model matrix (must have same number of columns as mod)}
 
 \item{drop.low.lambda}{Logical, whether to drop low lambdas.}
 
 \item{drop.extreme.dispersion}{Proportion of extreme dispersions to drop.}
+
+\item{lib.size}{Numeric vector giving the total count (sequence depth) for each library. If not provided, library sizes are extracted from the real dataset.}
+
+\item{flibs}{Some wiggle room for the library sizes extracted from real
+dataset.}
 
 \item{add.dropout}{Logical, whether to impose dropouts.}
 
@@ -57,7 +47,7 @@ dataset.}
 DGElist object containing all simulation settings and results, including the count matrix and dropout-imposed count matrix.
 }
 \description{
-Simulating scRNA-seq expression data 
+Simulating scRNA-seq expression data
 Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.
 }
 \examples{

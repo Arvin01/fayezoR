@@ -2,15 +2,13 @@
 % Please edit documentation in R/extrapolateData.R
 \name{extrapolateData}
 \alias{extrapolateData}
-\title{Extrapolate pilot data. 
+\title{Extrapolate pilot data.
 Takes an input pilot dataset and extrapolates it to a desired size.}
 \usage{
-extrapolateData(pilotdata, filename.pilot, group.pilot = NULL, nreps, depth)
+extrapolateData(pilotdata, group.pilot = NULL, nreps, depth)
 }
 \arguments{
 \item{pilotdata}{Numeric count matrix; pilot dataset to be extrapolated to a desired larger size.}
-
-\item{filename.pilot}{Filename of pilot dataset; extrapolated dataset will be named accordingly}
 
 \item{nreps}{Desired number of replicates per group in extrapolated data.}
 
@@ -19,10 +17,10 @@ extrapolateData(pilotdata, filename.pilot, group.pilot = NULL, nreps, depth)
 \item{groups.pilot}{Vector or factor giving the experimental group/condition for each sample/library in the pilot dataset. If not provided, groups are assumed equally divided.}
 }
 \value{
-Doesn't return anything, just saves the down-sampled datasets as RData.
+Extrapolated dataset, given pilot data
 }
 \description{
-Extrapolate pilot data. 
+Extrapolate pilot data.
 Takes an input pilot dataset and extrapolates it to a desired size.
 }
 \examples{

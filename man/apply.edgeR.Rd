@@ -2,23 +2,23 @@
 % Please edit documentation in R/apply.edgeR.R
 \name{apply.edgeR}
 \alias{apply.edgeR}
-\title{Apply edgeR on dataset. 
+\title{Apply edgeR on dataset.
 This is a general function which applies edgeR on a given dataset.}
 \usage{
-apply.edgeR(dataset, filename, group = NULL)
+apply.edgeR(dataset, group = NULL)
 }
 \arguments{
 \item{dataset}{Numeric count matrix of read counts.}
 
-\item{filename}{Filename of the dataset; edgeR results on that dataset will be named accordingly}
-
 \item{group}{Vector or factor giving the experimental group/condition for each sample/library in the pilot dataset. If not provided, groups are assumed equally divided.}
+
+\item{filename}{Filename of the dataset; edgeR results on that dataset will be named accordingly}
 }
 \value{
-Doesn't return anything, just saves the reults table as RData file.
+Applies edgeR to given dataset, and returns results table
 }
 \description{
-Apply edgeR on dataset. 
+Apply edgeR on dataset.
 This is a general function which applies edgeR on a given dataset.
 }
 \examples{

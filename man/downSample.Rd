@@ -2,7 +2,7 @@
 % Please edit documentation in R/downSample.R
 \name{downSample}
 \alias{downSample}
-\title{Down-sample RNA-seq data. 
+\title{Down-sample RNA-seq data.
 Down-sample full dataset to a smaller dataset of specified size.}
 \usage{
 downSample(dataset, group = NULL, nreps, depth, nsims = 20)
@@ -22,7 +22,7 @@ downSample(dataset, group = NULL, nreps, depth, nsims = 20)
 Doesn't return anything, just saves the down-sampled datasets as RData.
 }
 \description{
-Down-sample RNA-seq data. 
+Down-sample RNA-seq data.
 Down-sample full dataset to a smaller dataset of specified size.
 }
 \examples{

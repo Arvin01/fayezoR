@@ -2,10 +2,10 @@
 % Please edit documentation in R/getDataset.R
 \name{getDataset}
 \alias{getDataset}
-\title{Extract real dataset parameters. 
+\title{Extract real dataset parameters.
 Extract Negative Binomial parameters from real dataset.}
 \usage{
-getDataset(counts, drop.extreme.dispersion = 0.1, drop.low.lambda = TRUE)
+getDataset(counts, drop.extreme.dispersion, drop.low.lambda)
 }
 \arguments{
 \item{counts}{Numeric matrix of read counts from which to extract parameters.}
@@ -18,7 +18,7 @@ getDataset(counts, drop.extreme.dispersion = 0.1, drop.low.lambda = TRUE)
 List of parameters sampled from the real dataset: vector of gene-wise average log-CPM, vector of gene-wise dispersions, library sizes, number of genes.
 }
 \description{
-Extract real dataset parameters. 
+Extract real dataset parameters.
 Extract Negative Binomial parameters from real dataset.
 }
 \examples{

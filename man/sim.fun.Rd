@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim.fun.R
 \name{sim.fun}
 \alias{sim.fun}
-\title{Simulate scRNA-seq dataset. 
+\title{Simulate scRNA-seq dataset.
 Uses previously re-sampled parameters to simulate data according to Negative Binomial distribution.}
 \usage{
 sim.fun(object, seed)
@@ -16,7 +16,7 @@ sim.fun(object, seed)
 Saves simulated DE data to DGEList object.
 }
 \description{
-Simulate scRNA-seq dataset. 
+Simulate scRNA-seq dataset.
 Uses previously re-sampled parameters to simulate data according to Negative Binomial distribution.
 }
 \examples{
