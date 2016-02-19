@@ -7,9 +7,7 @@ Extract parameters from real dataset to simulate scRNA-seq expression data with 
 \usage{
 sim.scRNAseq(dataset, nlibs = NULL, nTags = NULL, design = NULL,
   beta = NULL, drop.low.lambda = TRUE, drop.extreme.dispersion = 0.1,
-  lib.size = NULL, flibs = c(0.7, 1.3), add.dropout = TRUE,
-  pDropout = c(0.1, 0.2, 0.5, 0.8), drop.method = c("zero", "poisson"),
-  drop.lambda = 1, verbose = TRUE, seed = NULL)
+  lib.size = NULL, flibs = c(0.7, 1.3), verbose = TRUE, seed = NULL)
 }
 \arguments{
 \item{dataset}{Numeric matrix of read counts from which to extract parameters.}
@@ -31,6 +29,10 @@ sim.scRNAseq(dataset, nlibs = NULL, nTags = NULL, design = NULL,
 \item{flibs}{Some wiggle room for the library sizes extracted from real
 dataset.}
 
+\item{verbose}{Logical, whether to print simulation progress to screen.}
+
+\item{seed}{Optional seed, if it desired to replicate the simulation.}
+
 \item{add.dropout}{Logical, whether to impose dropouts.}
 
 \item{pDropout}{Numeric vector of dropout probabilities to consider. Will only be used if \code{add.dropout=TRUE}.}
@@ -38,10 +40,6 @@ dataset.}
 \item{drop.method}{Dropout method, with two options: zero-inflation (default), or low-rate Poisson. Will only be used if \code{add.dropout=TRUE}.}
 
 \item{drop.lambda}{Mean of low-rate Poisson for the Poisson-dropout scenario. Will only be used if \code{add.dropout=TRUE} and \code{drop.method="poisson"}.}
-
-\item{verbose}{Logical, whether to print simulation progress to screen.}
-
-\item{seed}{Optional seed, if it desired to replicate the simulation.}
 }
 \value{
 DGElist object containing all simulation settings and results, including the count matrix and dropout-imposed count matrix.
