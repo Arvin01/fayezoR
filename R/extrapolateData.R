@@ -1,6 +1,7 @@
 #' Extrapolate pilot data.
 #' Takes an input pilot dataset and extrapolates it to a desired size.
 #' @param pilotdata Numeric count matrix; pilot dataset to be extrapolated to a desired larger size.
+#' @param design Model matrix (without an intercept) that you would like to simulate from
 #' @param groups.pilot Vector or factor giving the experimental group/condition for each sample/library in the pilot dataset. If not provided, groups are assumed equally divided.
 #' @param nreps Desired number of replicates per group in extrapolated data.
 #' @param depth Desired depth (in millions) for each sample/replicate in extrapolated data.
@@ -9,74 +10,76 @@
 #'
 #' @return Extrapolated dataset, given pilot data
 
-extrapolateData <- function(pilotdata, group.pilot=NULL, nreps, depth){
+extrapolateData <- function(pilotdata, design=NULL, nreps, depth){
 
-  N.pilot <- dim(pilotdata)[2]
-  G <- dim(pilotdata)[1]
+  counts <- pilotdata
 
-  ### First, multinomial sampling to increase the depths
-  ### Why? Higher depths better for estimating means and dispersions
-
-  # Initialize the matrix
-  d.augdepths <- data.frame(matrix(ncol=N.pilot, nrow=G))
-  # colnames(d.augdepths) <- colnames(pilotdata)
-
-  # Increase to desired depths
-  for(n in 1:N.pilot){
-    d.augdepths[,n] <- rmultinom(1, size=depth*1e6, prob=pilotdata[,n])
+  # Get nn0 = number of nonzero counts per row
+  # Filter out rows with only 1 nonzero count (otherwise can't get disp)
+  counts0 = counts==0
+  nn0 = rowSums(!counts0)
+  if(any(nn0 == 1)){
+    counts = counts[nn0 > 1, ]
+    nn0 = nn0[nn0 > 1]
+    counts0 = counts==0
   }
 
-  ### Extract genewise dispersions from pilot data
+  nsamples <- dim(counts)[2]
+  G <- dim(counts)[1]
 
-  # Turn count matrix input into DGElist object
-  d <- DGEList(d.augdepths)
-  # Calculate normalization factors
-  d <- calcNormFactors(d)
-  # Estimate dispersions via edgeR
-  d <- estimateGLMCommonDisp(d)
-  d <- estimateGLMTrendedDisp(d)
-  d <- estimateGLMTagwiseDisp(d)
+  ### Estimate dispersion from nonzero data
 
-  dispersion <- d$tagwise.dispersion
+  mu = rowSums((!counts0)*counts)/nsamples
+  var = rowSums((!counts0)*(counts - mu)^2)/(nn0-1)
+  disp = (var-mu + 0.0001)/mu^2
+  disp = ifelse(disp > 0, disp, min(disp[disp > 0]))
 
-  ### Get separate means per group from pilot data
+  ### Get proportion of nonzeros for each row
 
-  # If group is not provided, set 2 groups with equal number of replicates
-  if (is.null(group.pilot)){
-    group.pilot <- as.factor(rep(c("A", "B"), each=N.pilot/2))
+  pZero = 1 - nn0/nsamples
+
+  ### Estimate row means from nonzero data, separately for each group
+
+  # If design matrix indicating groups is not provided, set 2 groups with equal number of replicates
+  if (is.null(design)){
+    group <- rep(c(-1, 1), each=nsamples/2)
+    design <- model.matrix(~-1 + group)
   }
-  group.pilot <- as.factor(group.pilot)
-  d$group <- group.pilot
 
-  # Subset the groups
-  d.grp1 <- d[,d$group==levels(d$group)[1]]
-  d.grp2 <- d[,d$group==levels(d$group)[2]]
+  # Subset the data by groups
+  group <- as.factor(group)
+  d.grp1 <- counts[,group==levels(group)[1]]
+  d.grp2 <- counts[,group==levels(group)[2]]
+  counts0.grp1 = d.grp1==0
+  counts0.grp2 = d.grp2==0
 
   # Save the average log CPM, for each group
   # Note that aveLogCPM(x), rowMeans(cpm(x,log=TRUE)) and log2(rowMeans(cpm(x)) all give slightly different results.
   # Use aveLogCPM(x) here as it doesn't return any Inf values and its values are close to log2(rowMeans(cpm(x))) which I had used previously
-  grp1.AveLogCPM <- aveLogCPM(d.grp1)
-  grp2.AveLogCPM <- aveLogCPM(d.grp2)
+  grp1.aveLogCPM <- aveLogCPM((!counts0.grp1)*d.grp1)
+  grp2.aveLogCPM <- aveLogCPM((!counts0.grp2)*d.grp2)
 
-  # Get genewise lambdas (for each roup) to be used for extrapolated dataset
-  lambda1 <- 2^(grp1.AveLogCPM)
-  lambda2 <- 2^(grp2.AveLogCPM)
-  lambda1 <- lambda1/sum(lambda1)
-  lambda2 <- lambda2/sum(lambda2)
+  # Get genewise mean (for each group) to be used for extrapolated dataset
+  mu1 <- 2^(grp1.aveLogCPM)
+  mu2 <- 2^(grp2.aveLogCPM)
+  mu1 <- mu1/sum(mu1)
+  mu2 <- mu2/sum(mu2)
 
   # Expand genewise lambdas and dispersions
-  Lambda1 <- expandAsMatrix(lambda1, dim=c(G, nreps))
-  Lambda2 <- expandAsMatrix(lambda2, dim=c(G, nreps))
-  Lambda <- cbind(Lambda1, Lambda2)
-  Dispersion <- expandAsMatrix(dispersion, dim = c(G, nreps*2))
-
-  ### NB sampling, given means, dispersions, library sizes
+  mu1 <- expandAsMatrix(mu1, dim=c(G, nreps))
+  mu2 <- expandAsMatrix(mu2, dim=c(G, nreps))
+  mu <- cbind(mu1, mu2)
+  dispersion <- expandAsMatrix(disp, dim = c(G, nreps*2))
 
   lib.size <- rep(depth*1e6, nreps*2)
-  extrapolatedData <- matrix(rnbinom(G*nreps*2, mu = t(t(Lambda)*lib.size), size = 1/Dispersion), nrow = G, ncol = nreps*2)
+
+  ### Extrapolate the data using NB sampling
+
+  extrapolatedData <- matrix(rnbinom(G*nreps*2, mu = t(t(mu)*lib.size), size = 1/dispersion),
+                             nrow = G, ncol = nreps*2)
   rownames(extrapolatedData) <- paste("ids", 1:G, sep = "")
-  colnames(extrapolatedData) <- c(paste(levels(group.pilot)[1], 1:nreps, sep=""),
-                                  paste(levels(group.pilot)[2], 1:nreps, sep=""))
+  colnames(extrapolatedData) <- c(paste("A", 1:nreps, sep=""),
+                                  paste("B", 1:nreps, sep=""))
 
   extrapolatedData
 }
