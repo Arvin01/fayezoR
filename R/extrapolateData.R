@@ -10,7 +10,7 @@
 #'
 #' @return Extrapolated dataset, given pilot data
 
-extrapolateData <- function(pilotdata, design=NULL, nreps, depth){
+extrapolateData <- function(pilotdata, nreps, depth, design=NULL){
 
   counts <- pilotdata
 
@@ -77,10 +77,11 @@ extrapolateData <- function(pilotdata, design=NULL, nreps, depth){
 
   extrapolatedData <- matrix(rnbinom(G*nreps*2, mu = t(t(mu)*lib.size), size = 1/dispersion),
                              nrow = G, ncol = nreps*2)
-  rownames(extrapolatedData) <- paste("ids", 1:G, sep = "")
-  colnames(extrapolatedData) <- c(paste("A", 1:nreps, sep=""),
-                                  paste("B", 1:nreps, sep=""))
+  I.count <- t(sapply(pZero, function(p) rbinom(nreps*2, prob=1-p, size=1)))
+  extrapolatedData <- I.count*extrapolatedData
 
+  rownames(extrapolatedData) <- paste("ids", 1:G, sep = "")
+  colnames(extrapolatedData) <- paste("sample", 1:(nreps*2), sep = "")
   extrapolatedData
 }
 
