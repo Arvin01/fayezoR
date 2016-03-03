@@ -9,6 +9,8 @@
 
 recordPlotData <- function(reps, depths, nsims){
 
+  setwd("/scratch/radon/z/zheng64/ExpDesignApp/Results")
+
   ########## RECORD DE DATA
 
   recordDE.df <- data.frame(reps=0, depth=0, numDE=0)
