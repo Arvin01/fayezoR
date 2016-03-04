@@ -42,17 +42,17 @@ recordPlotData <- function(reps, depths, nsims){
   recordDE.overlap <- data.frame(reps=NA, depth=NA, FDR=NA, numDE=NA, TPR=NA, FPR=NA)
 
   # Get goldstandard DE list as those found by edgeR
-  load("fullData.RData")
-  edgeRres$FDR <- p.adjust(edgeRres$PValue, method="BH")
-  goldstandard.DElist <- which(edgeRres$FDR <= 0.05)
-  numPos <- length(goldstandard.DElist)
-  numNeg <- dim(edgeRres)[1]-numPos
+  # load("fullData.RData")
+  # edgeRres$FDR <- p.adjust(edgeRres$PValue, method="BH")
+  # goldstandard.DElist <- which(edgeRres$FDR <= 0.05)
+  # numPos <- length(goldstandard.DElist)
+  # numNeg <- dim(edgeRres)[1]-numPos
 
   # Alternatively, get goldstandard DE list as the true simulated DE genes
-  #load("../Datasets/fullData.RData")
-  #goldstandard.DElist <- fullData$indDE
-  #numPos <- length(goldstandard.DElist)
-  #numNeg <- fullData$nTags-numPos
+  load("../Datasets/fullData.RData")
+  goldstandard.DElist <- fullData$indDE
+  numPos <- length(goldstandard.DElist)
+  numNeg <- fullData$nTags-numPos
 
   for (rep in as.character(reps)){
     for (depth in as.character(depths)){
