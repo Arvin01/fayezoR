@@ -5,7 +5,7 @@
 \title{Extrapolate pilot data.
 Takes an input pilot dataset and extrapolates it to a desired size.}
 \usage{
-extrapolateData(pilotdata, group.pilot = NULL, nreps, depth)
+extrapolateData(pilotdata, nreps, depth, design = NULL)
 }
 \arguments{
 \item{pilotdata}{Numeric count matrix; pilot dataset to be extrapolated to a desired larger size.}
@@ -13,6 +13,8 @@ extrapolateData(pilotdata, group.pilot = NULL, nreps, depth)
 \item{nreps}{Desired number of replicates per group in extrapolated data.}
 
 \item{depth}{Desired depth (in millions) for each sample/replicate in extrapolated data.}
+
+\item{design}{Model matrix (without an intercept) that you would like to simulate from}
 
 \item{groups.pilot}{Vector or factor giving the experimental group/condition for each sample/library in the pilot dataset. If not provided, groups are assumed equally divided.}
 }
