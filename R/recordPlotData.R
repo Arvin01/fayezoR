@@ -50,7 +50,7 @@ recordPlotData <- function(reps, depths, nsims){
 
   # Alternatively, get goldstandard DE list as the true simulated DE genes
   load("../Datasets/fullData.RData")
-  goldstandard.DElist <- fullData$indDE
+  goldstandard.DElist <- 1:1000
   numPos <- length(goldstandard.DElist)
   numNeg <- fullData$nTags-numPos
 
