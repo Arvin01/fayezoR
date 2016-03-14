@@ -1,20 +1,20 @@
 #' Simulating scRNA-seq expression data
 #'
-#' Extract parameters from real dataset to simulate scRNA-seq expression data with differentially expressed genes; options for imposing dropouts on the data.
+#' Extract parameters from real dataset to simulate scRNA-seq expression data with (or without) differentially expressed genes.
 #' @param dataset Numeric matrix of read counts from which to extract parameters.
 #' @param nlibs Desired number of replicates per group.
 #' @param nTags Desired number of genes. If not provided, simulated dataset will contain as many genes as the real dataset.
-#' @param design Model matrix (without an intercept) that you would like to simulate from
-#' @param beta Set of coefficients for the model matrix (must have same number of columns as mod)
+#' @param design Model matrix (without an intercept). If nlibs is provided, must have same number of replicates per group.
+#' @param beta Set of coefficients for each gene. Must have same number of columns as model matrix. If nTags is provided, must have the same number of genes.
 #' @param lib.size Numeric vector giving the total count (sequence depth) for each library. If not provided, library sizes are extracted from the real dataset.
 #' @param flibs Some wiggle room for the library sizes extracted from real
 #'   dataset.
-#' @param drop.low.lambda Logical, whether to drop low lambdas.
-#' @param drop.extreme.dispersion Proportion of extreme dispersions to drop.
+#' @param drop.low.lambda Logical, whether to drop low lambdas from those extracted from real dataset.
+#' @param drop.extreme.dispersion Proportion of extreme dispersions to drop from those extracted from real dataset.
 #' @param add.dropout Logical, whether to impose dropouts.
-#' @param pDropout Numeric vector of dropout probabilities to consider. Will only be used if \code{add.dropout=TRUE}.
-#' @param drop.method Dropout method, with two options: zero-inflation (default), or low-rate Poisson. Will only be used if \code{add.dropout=TRUE}.
-#' @param drop.lambda Mean of low-rate Poisson for the Poisson-dropout scenario. Will only be used if \code{add.dropout=TRUE} and \code{drop.method="poisson"}.
+#' #@param pDropout Numeric vector of dropout probabilities to consider. Will only be used if \code{add.dropout=TRUE}.
+#' #@param drop.method Dropout method, with two options: zero-inflation (default), or low-rate Poisson. Will only be used if \code{add.dropout=TRUE}.
+#' #@param drop.lambda Mean of low-rate Poisson for the Poisson-dropout scenario. Will only be used if \code{add.dropout=TRUE} and \code{drop.method="poisson"}.
 #' @param verbose Logical, whether to print simulation progress to screen.
 #' @param seed Optional seed, if it desired to replicate the simulation.
 #' @export

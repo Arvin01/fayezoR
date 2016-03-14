@@ -38,5 +38,19 @@ apply.zinb <- function(dataset, group=NULL){
 
   # Apply ZINB on each gene
   ZINBres <- apply(data.df[,1:G], 2, zeroinf.p)
-  ZINBres
+
+  # Remove ZINBres which are NAs
+  lengths <- sapply(ZINBres, length)
+  ind.NA <- which(lengths!=4)
+  ZINBres.noNA <- ZINBres[-ind.NA]
+  names <- names(ZINBres.noNA)
+
+  # Getting results in matrix form
+  ind.keep <- which(lengths==4)
+  ZINBres.df <- as.data.frame(matrix(unlist(ZINBres.noNA), ncol=4, byrow=TRUE), row.names=ind.keep)
+  names(ZINBres.df) <- c("Beta", "SE", "ZValue", "PValue")
+
+  # Putting in adjusted p-value
+  ZINBres.df$FDR <- p.adjust(ZINBres.df$PValue, method="BH")
+  ZINBres.df
 }

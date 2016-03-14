@@ -1,13 +1,13 @@
 #' Extract real dataset parameters.
 #' Extract Negative Binomial parameters from real dataset.
 #' @param counts Numeric matrix of read counts from which to extract parameters.
-#' @param drop.extreme.dispersion Proportion of extreme dispersions to drop.
-#' @param drop.low.lambda Logical, whether to drop low lambdas.
+#' @param drop.extreme.dispersion Proportion of extreme dispersions to drop from those extracted from real dataset.
+#' @param drop.low.lambda Logical, whether to drop low lambdas from those extracted from real dataset.
 #' @keywords internal
 #' @export
 #' @examples
 #'
-#' @return List of parameters sampled from the real dataset: vector of gene-wise average log-CPM, vector of gene-wise dispersions, library sizes, number of genes.
+#' @return List of parameters sampled from the real dataset: vector of gene-wise average log-CPM, vector of gene-wise dispersions, vector of genewise zero probabilities, library sizes, number of genes, number of samples.
 #'
 
 getDataset <- function(counts, drop.extreme.dispersion, drop.low.lambda) {
