@@ -44,7 +44,7 @@ recordPlotData <- function(reps, depths, nsims){
   # Get goldstandard DE list as those found by edgeR
   load("fullData.RData")
   edgeRres$FDR <- p.adjust(edgeRres$PValue, method="BH")
-  goldstandard.DElist <- rownames(fullresults[fullresults$FDR <= 0.05,])
+  goldstandard.DElist <- rownames(edgeRres[edgeRres$FDR <= 0.05,])
 
   # Alternatively, get goldstandard DE list as the true simulated DE genes
   # load("../Datasets/fullData.RData")
