@@ -44,7 +44,8 @@ recordPlotData <- function(reps, depths, nsims){
   # Get goldstandard DE list as those found by edgeR
   load("fullData.RData")
   edgeRres$FDR <- p.adjust(edgeRres$PValue, method="BH")
-  goldstandard.DElist <- rownames(edgeRres[edgeRres$FDR <= 0.05,])
+  goldstandard.DEnames <- rownames(edgeRres[edgeRres$FDR <= 0.05,])
+  goldstandard.DElist <- which(edgeRres$FDR <= 0.05)
 
   # Alternatively, get goldstandard DE list as the true simulated DE genes
   # load("../Datasets/fullData.RData")
@@ -65,7 +66,7 @@ recordPlotData <- function(reps, depths, nsims){
         # Because not all genes appear in the extrapolated datasets,
         # numPos = # true DE genes appearing in extrapolated dataset
         # numNeg = # true nonDE genes appearing in extrapolated dataset
-        numPos <- length(intersect(goldstandard.DElist, rownames(edgeRres)))
+        numPos <- length(intersect(goldstandard.DEnames, rownames(edgeRres)))
         numNeg <- dim(edgeRres)[1]-numPos
 
         #vary FDR level
