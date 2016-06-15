@@ -90,3 +90,6 @@ recordPlotData <- function(reps, depths, nsims){
   write.table(agg.overlap, "../Plots/agg.overlap.txt", sep="\t", quote=FALSE, col.names=TRUE, row.names=FALSE)
   write.table(recordDE.overlap, file="../Plots/recordDE.overlap.txt", sep="\t", quote=FALSE, col.names=TRUE, row.names=FALSE)
 }
+
+plot(rowMeans(log(fullData$counts+1)), rowVars(log(fullData$counts+1)), pch=10, col=trop[1], main="Simulated", xlim=c(0,10), ylim=c(0,10), xlab="Mean(Count)", ylab="Var(Count)", cex=0.3)
+plot(rowMeans(log(prostatedata+1)), rowVars(log(prostatedata+1)), pch=10, col=trop[2], main="Original", xlim=c(0,10), ylim=c(0,10), xlab="Mean(Count)", ylab="Var(Count)", cex=0.3)
